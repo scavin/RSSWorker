@@ -39,4 +39,15 @@ app.onError((err, c) => {
 // );
 app.use('/*', cors());
 
-export default app;
+export default {
+	fetch(request, env, ctx) {
+		const url = new URL(request.url);
+		const token = url.searchParams.get('token');
+
+		if (token !== env.API_TOKEN) {
+			return new Response('Forbidden', { status: 403 });
+		}
+
+		return app.fetch(request, env, ctx);
+	},
+};
